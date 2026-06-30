@@ -1,27 +1,38 @@
 class Solution {
 public:
     int numberOfSubstrings(string s) {
+        int len = s.length();
+        int left = 0, right = 0;
+        // Track frequency of a, b, c
+        vector<int> freq(3, 0);
+        int total = 0;
 
-        int n = s.size();
+        while (right < len) {
+            // Add character at right pointer to frequency array
+            char curr = s[right];
+            freq[curr - 'a']++;
 
-        vector<int> freq(3,0);
+            // While we have all required characters
+            while (hasAllChars(freq)) {
+                // All substrings from current window to end are valid
+                // Add count of these substrings to result
+                total += len - right;
 
-        int left = 0;
-        int ans = 0;
-
-        for(int right=0; right<n; right++)
-        {
-            freq[s[right]-'a']++;
-
-            while(freq[0] && freq[1] && freq[2])
-            {
-                ans += (n-right);
-
-                freq[s[left]-'a']--;
+                // Remove leftmost character and move left pointer
+                char leftChar = s[left];
+                freq[leftChar - 'a']--;
                 left++;
             }
+
+            right++;
         }
 
-        return ans;
+        return total;
+    }
+
+private:
+    bool hasAllChars(vector<int>& freq) {
+        // Check if we have at least one of each character
+        return freq[0] > 0 && freq[1] > 0 && freq[2] > 0;
     }
 };
